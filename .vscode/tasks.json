@@ -1,0 +1,125 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "▶ DataOps: (1) Configure Project",
+            "type": "shell", // "shell" or "process"
+            "command": ["nano"],
+            "windows": {
+                "command": "if not exist .env ( echo Creating new .env file from .env.template... && copy .env.template .env ) else ( echo Loading .env... Please edit and save your changes... ) && notepad"
+            },
+            "args": [".env"],
+            "options": {
+                "cwd": "dataops-project",
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to initialize or configure project settings",
+                    "label": ">config!"
+                }
+            },
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared",
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+        },
+        {
+            "label": "▶ DataOps: (2) Refresh Environment",
+            "type": "shell", // "shell" or "process"
+            "command": "gradle dockerFreshUp",
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "options": {
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to build the main docker image...",
+                    "label": ">docker-build!"
+                }
+            }
+        },
+        {
+            "label": "▶ DataOps: (4) Launch Interactive Terminal...",
+            "type": "shell",
+            "command": "docker-compose --project-name dataops-project-template_devcontainer -f .devcontainer/docker-compose.dev.yml exec dataops_dev bash",
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": ".",
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to run the bash terminal within the main docker image...",
+                    "label": ">docker-bash!"
+                }
+            }
+        },
+        {
+            "label": "▶ DataOps: (5) Compile DBT Transforms",
+            "type": "process", // "shell" or "process"
+            "command": "gradle dbtCompile",
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": "./dataops-project/transform",
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to run `dbt compile` within the main docker image...",
+                    "label": ">dbt-compile!"
+                }
+            }
+        },
+        {
+            "label": "▶ DataOps: (6) Run DBT Transforms",
+            "type": "process", // "shell" or "process"
+            "command": "gradle dbtRun",
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": "./dataops-project/transform",
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to run `dbt run` within the main docker image...",
+                    "label": ">dbt-run!"
+                }
+            }
+        },
+        {
+            "label": "▶ DataOps: (9) Launch Dockerized VS Code...",
+            "type": "shell", // "shell" or "process"
+            "command": "code --folder-uri \"vscode-remote://dev-container%2B633a5c46696c65735c536f757263655c646174616f70732d70726f6a6563742d74656d706c617465/projects\"",
+            "group": "build", // "test" for tests
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "options": {
+                "cwd": ".",
+                "statusbar": {
+                    "color": "#ffffff",
+                    "tooltip": "Click to run VS Code within the main docker image...",
+                    "label": ">docker-vscode!"
+                }
+            }
+        },
+    ]
+}
